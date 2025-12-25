@@ -19,6 +19,8 @@ admin
     "password":"123456"
 }
 
+git repo : https://github.com/GreenerAsraf/assignment2L2b6
+
 PORT=3000
 DATABASE_URL=postgresql://username:password@localhost:5432/vehicle_rental
 
@@ -115,4 +117,5 @@ curl -X POST http://localhost:3000/api/v1/auth/signin \
   -H "Content-Type: application/json" \
   -d '{"email":"john@example.com","password":"secure123"}'
 ```
+
 # assignment2L2b6

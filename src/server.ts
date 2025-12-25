@@ -18,9 +18,6 @@ app.use('/api/v1/auth', authRoute)
 app.use('/api/v1/vehicles', vehicleRoute)
 app.use('/api/v1/bookings', BookingRoute)
 
-// app.use('/api/bookings', bookingRoutes);
-// app.use('/api/customers', customerRoutes);
-
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello World! from Asraf from mid')
 })
