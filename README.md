@@ -22,7 +22,7 @@ admin
 git repo : https://github.com/GreenerAsraf/assignment2L2b6
 
 PORT=3000
-DATABASE_URL=postgresql://username:password@localhost:5432/vehicle_rental
+LIVE_URL=https://assignment2l2b6.onrender.com/
 
 CONNECTION_STRING="postgresql://neondb_owner:npg_CKI7UErePG4k@ep-silent-morning-a44uuzlx-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
 
