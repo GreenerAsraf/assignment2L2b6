@@ -4,6 +4,7 @@ import { authRoute } from './modules/auth/auth.route'
 import { userRoute } from './modules/user/user.route'
 import { vehicleRoute } from './modules/vehicles/vehicle.route'
 import { BookingRoute } from './modules/bookings/bookings.route'
+import { bookingsServices } from './modules/bookings/bookings.service'
 
 const port = process.env.PORT || 5000
 const app = express()
@@ -12,6 +13,12 @@ app.use(express.json())
 
 // Database connection
 initDB()
+
+// Run expired bookings check on startup and then every 5 minutes
+bookingsServices.autoReturnExpiredBookings().catch(console.error)
+setInterval(() => {
+  bookingsServices.autoReturnExpiredBookings().catch(console.error)
+}, 5 * 60 * 1000)
 
 app.use('/api/v1/users', userRoute)
 app.use('/api/v1/auth', authRoute)

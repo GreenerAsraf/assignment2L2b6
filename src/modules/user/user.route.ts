@@ -9,12 +9,12 @@ router.post('/', userController.createUser)
 router.get('/', auth(Roles.admin), userController.getAllUser)
 router.get(
   '/:id',
-  auth(Roles.customer) || auth(Roles.admin),
+  auth(Roles.customer, Roles.admin),
   userController.getSingleUser
 )
 router.put(
   '/:id',
-  auth(Roles.customer) || auth(Roles.admin),
+  auth(Roles.customer, Roles.admin),
   userController.updateUser
 )
 router.delete('/:id', auth(Roles.admin), userController.deleteUser)

@@ -39,11 +39,11 @@ const getAllVehicleIntoDB = async () => {
   return result
 }
 
-const getSingleVehicleIntoDB = async (req: Request, res: Response) => {
+const getSingleVehicleIntoDB = async (vehicleId: string) => {
   const result = await pool.query(
     ` SELECT * FROM vehicles WHERE id=$1
     `,
-    [req.params.vehicleId]
+    [vehicleId]
   )
 
   return result
@@ -68,6 +68,14 @@ const updateVehicleIntoDB = async (
 }
 
 const deleteVehicleIntoDB = async (vehicleId: string) => {
+  const activeBookings = await pool.query(
+    `SELECT * FROM bookings WHERE vehicle_id = $1 AND status = 'active'`,
+    [vehicleId]
+  )
+  if (activeBookings.rows.length > 0) {
+    throw new Error('Cannot delete vehicle. Active bookings exist for this vehicle!')
+  }
+
   const result = await pool.query(
     `
     DELETE FROM vehicles WHERE id = $1 RETURNING *;

@@ -7,15 +7,17 @@ interface UserPayload {
   name: string
   email: string
   password: string
+  phone: string
   role: 'admin' | 'customer'
 }
 
 const signinUserIntoDB = async (email: string, password: string) => {
+  const normalizedEmail = email.trim().toLowerCase()
   const user = await pool.query(
     `
         SELECT * FROM users WHERE email=$1
         `,
-    [email]
+    [normalizedEmail]
   )
 
   if (user.rows.length === 0) {
@@ -37,20 +39,33 @@ const signinUserIntoDB = async (email: string, password: string) => {
     expiresIn: '7d'
   })
 
-  return { token, user: user.rows[0] }
+  // Exclude password from the returned user details
+  const { password: _, ...userWithoutPassword } = user.rows[0]
+
+  return { token, user: userWithoutPassword }
 }
 const signupUserIntoDB = async (payload: UserPayload) => {
-  const { name, email, password, role } = payload
+  const { name, email, password, phone, role } = payload
+
+  if (!password || password.length < 6) {
+    throw new Error('Password must be at least 6 characters long!')
+  }
+
+  if (!phone) {
+    throw new Error('Phone number is required!')
+  }
+
+  const normalizedEmail = email.trim().toLowerCase()
 
   const hashedPassword = await bcrypt.hash(password, 12)
 
   const user = await pool.query(
     `
-        INSERT INTO users (name, email, password, role)
-        VALUES ($1, $2, $3, $4)
-        RETURNING *
+        INSERT INTO users (name, email, password, phone, role)
+        VALUES ($1, $2, $3, $4, $5)
+        RETURNING id, name, email, phone, role, age, created_at, updated_at
         `,
-    [name, email, hashedPassword, role]
+    [name, normalizedEmail, hashedPassword, phone, role || 'customer']
   )
 
   const jwtPayload = {
@@ -67,7 +82,7 @@ const signupUserIntoDB = async (payload: UserPayload) => {
   console.log('JWT SECRET:', config.jwtSecret)
   console.log({ token })
 
-  return { token, user }
+  return { token, user: user.rows[0] }
 }
 
 export const authServices = {
